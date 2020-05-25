@@ -150,6 +150,16 @@ async function updateDocument_UpdateFirst_findByIdAndUpdate(id){
     console.log(result);
 }
 
+async function removeDocument(id){
+
+    // Remove document by ID and return the removed document
+    let result = await Course.findByIdAndRemove(id);
+    console.log('Document removed.');
+    console.log(result);
+}
+
+//// Remove document by ID and return the removed document
+// removeDocument('5ecbd83361988d2964deb06e')
 
 //// Update document - Query First approach
 // updateDocument_QueryFirst('5ecbd83361988d2964deb06e');
