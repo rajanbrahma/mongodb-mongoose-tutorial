@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/playground')
+mongoose.connect('mongodb://localhost/mongo-exercises')
     .then( result => console.log('Connection successful.'))
     .catch( err => console.log('Error while connecting.'));
 
@@ -12,6 +12,14 @@ const courseSchema = new mongoose.Schema({
     isPublished: Boolean
 });
 
+/*
+    mongoose.model() this function accepts 2 arguments,
+    'CollectionName' of string type and the schema object 
+    which represents the document structure of CollectionName collection.
+    Mongoose automatically adds an 's' at the end of CollectionName and lowers
+    all the letters. For example, 'Course' will become 
+    'courses' collection in MongoDB
+*/
 const Course = mongoose.model('Course',courseSchema);
 
 async function createCourse(){
@@ -24,40 +32,82 @@ async function createCourse(){
     const result = await course.save();
 }
 
-async function getCourses(){
+/*
+    Get all the published courses that are $15 or more,
+    or have the word 'by' in their title
+    sort by their price in desc order
+    pick only name, author and price
+    display
+*/
+async function getCourses_query3(){
     let pageNumber = 1;
     const pageSize = 10;
     const courses = await Course.find({
-        author: /.*jan.*/i,
-        isPublished: true
-    }).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({
-        name: 1
-    }).select({
+        isPublished: true,
+    }).or([ { price: { $gte : 15 } }, { name: /.*by.*/i } ]).sort({
+        price: -1
+    }).skip((pageNumber - 1) * pageSize).limit(pageSize).select({
         name: 1,
-        tags: 1,
         author: 1,
-        _id: 0
+        _id: 0,
+        price: 1
     });
 
+    console.log('Output of query3 : ');
     console.log(courses);
-    // [
-    //     { 
-    //         tags: [ 'Frontend', 'JavaScript' ],
-    //         name: 'Angular JS',
-    //         author: 'Rajan'
-    //     },
-    //     {
-    //         tags: [ 'Node', 'Backend', 'JavaScript' ],
-    //         name: 'Node JS',
-    //         author: 'Rajan' 
-    //     }
-    // ]
 }
 
-async function deleteCourse(){
-    const courses = await Course.deleteMany({
-        date : { $gt: '2020-05-24T19:18:41.953+00:00'}
+/*
+    Get all the published frontend and backend courses
+    sort by their price in desc order
+    pick only name and author
+    display
+*/
+async function getCourses_query2(){
+    let pageNumber = 1;
+    const pageSize = 10;
+    const courses = await Course.find({
+        isPublished: true,
+        tags: { $in: [/.*backend.*/i,/.*frontend.*/i]}
+    }).sort({
+        price: -1
+    }).skip((pageNumber - 1) * pageSize).limit(pageSize).select({
+        name: 1,
+        author: 1,
+        _id: 0,
+        price: 1
     });
+
+    console.log('Output of query2 : ');
+    console.log(courses);
 }
 
-getCourses();
+/*
+    Get all the published backend courses
+    sort by their name
+    pick only name and author
+    display
+*/
+async function getCourses_query1(){
+    let pageNumber = 1;
+    const pageSize = 10;
+    const courses = await Course.find({
+        isPublished: true,
+        tags: 'backend'
+    }).sort({
+        name: 1
+    }).skip((pageNumber - 1) * pageSize).limit(pageSize).select({
+        name: 1,
+        author: 1,
+        _id: 0,
+    });
+
+    console.log('Output of query1 : ');
+    console.log(courses);
+}
+
+
+getCourses_query1();
+getCourses_query2();
+getCourses_query3();
+createCourse();
