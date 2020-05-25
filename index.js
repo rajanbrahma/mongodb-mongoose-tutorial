@@ -106,8 +106,60 @@ async function getCourses_query1(){
     console.log(courses);
 }
 
+async function updateDocument_QueryFirst(id){
 
-getCourses_query1();
-getCourses_query2();
-getCourses_query3();
-createCourse();
+    // Search by id, if not found then return
+    let course = await Course.findById(id);
+    if(!course) {
+        console.log('Course not found.');
+        return;
+    }
+
+    // Update the target object
+    course.isPublished = true;
+    course.author = 'Some Author';
+
+    // Push it back to the DB
+    let result = await course.save();
+    
+    console.log('Course Updated : ');
+    console.log(result);
+}
+
+async function updateDocument_UpdateFirst(id){
+    let result = await Course.update({
+        _id: id
+    },{
+        $set: {
+            author: 'Rockstar',
+            isPublished: false
+        }
+    });
+    console.log('Update document with update first approach.');
+    console.log(result);
+}
+
+async function updateDocument_UpdateFirst_findByIdAndUpdate(id){
+    let result = await Course.findByIdAndUpdate(id,{
+        $set: {
+            author: 'Ranbir',
+            isPublished: true
+        }
+    }, { new: true });
+    console.log('Update document with update first approach.');
+    console.log(result);
+}
+
+
+//// Update document - Query First approach
+// updateDocument_QueryFirst('5ecbd83361988d2964deb06e');
+
+//// Update document - Update First approach
+// updateDocument_UpdateFirst_update('5ecbd83361988d2964deb06e');
+// updateDocument_UpdateFirst_findByIdAndUpdate('5ecbd83361988d2964deb06e');
+
+//// Queries
+// getCourses_query1();
+// getCourses_query2();
+// getCourses_query3();
+// createCourse();
