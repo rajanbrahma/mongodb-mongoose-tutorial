@@ -22,25 +22,6 @@ const courseSchema = new mongoose.Schema({
 */
 const Course = mongoose.model('Course',courseSchema);
 
-async function createCourse(){
-    const course = new Course({
-        // name: 'Angular JS',
-        author: 'Rajan',
-        tags: ['Frontend','JavaScript'],
-        // isPublished: true
-    });
-    try{
-        // await course.validate(); 
-        // This validate() method automatically kicks in
-        // when mongoose is trying to save an object into the DB
-        // We can manually kickin the validation() methond also
-        const result = await course.save();
-    }
-    catch(ex){
-        console.log(ex);
-    }
-    
-}
 
 /*
     Get all the published courses that are $15 or more,
@@ -116,70 +97,8 @@ async function getCourses_query1(){
     console.log(courses);
 }
 
-async function updateDocument_QueryFirst(id){
-
-    // Search by id, if not found then return
-    let course = await Course.findById(id);
-    if(!course) {
-        console.log('Course not found.');
-        return;
-    }
-
-    // Update the target object
-    course.isPublished = true;
-    course.author = 'Some Author';
-
-    // Push it back to the DB
-    let result = await course.save();
-    
-    console.log('Course Updated : ');
-    console.log(result);
-}
-
-async function updateDocument_UpdateFirst(id){
-    let result = await Course.update({
-        _id: id
-    },{
-        $set: {
-            author: 'Rockstar',
-            isPublished: false
-        }
-    });
-    console.log('Update document with update first approach.');
-    console.log(result);
-}
-
-async function updateDocument_UpdateFirst_findByIdAndUpdate(id){
-    let result = await Course.findByIdAndUpdate(id,{
-        $set: {
-            author: 'Ranbir',
-            isPublished: true
-        }
-    }, { new: true });
-    console.log('Update document with update first approach.');
-    console.log(result);
-}
-
-async function removeDocument(id){
-
-    // Remove document by ID and return the removed document
-    let result = await Course.findByIdAndRemove(id);
-    console.log('Document removed.');
-    console.log(result);
-}
-
-//// Remove document by ID and return the removed document
-// removeDocument('5ecbd83361988d2964deb06e')
-
-//// Update document - Query First approach
-// updateDocument_QueryFirst('5ecbd83361988d2964deb06e');
-
-//// Update document - Update First approach
-// updateDocument_UpdateFirst_update('5ecbd83361988d2964deb06e');
-// updateDocument_UpdateFirst_findByIdAndUpdate('5ecbd83361988d2964deb06e');
 
 //// Queries
 // getCourses_query1();
 // getCourses_query2();
 // getCourses_query3();
-createCourse();
