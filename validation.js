@@ -67,7 +67,7 @@ async function createCourse(){
         name: 'Angular JS',
         author: 'Rajan',
         tags: null,
-        category: 'web',
+        category: '-',
         isPublished: true,
         price: 10
     });
@@ -79,7 +79,8 @@ async function createCourse(){
         const result = await course.save();
     }
     catch(ex){
-        console.log(ex.message);
+        for (field in ex.errors)
+            console.log(ex.errors[field].message);
     }
 }
 
